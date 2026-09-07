@@ -1,15 +1,15 @@
 name: CI Lint
 
 on:
-  push:
-    # Branch validation happens via pull_request; only run on push for the
-    # mainline refs to avoid duplicate push+PR runs on feature branches.
-    branches:
-      - "main"
-      - "release-*"
-  pull_request:
-    branches:
-      - "**"
+  # push:
+  #   # Branch validation happens via pull_request; only run on push for the
+  #   # mainline refs to avoid duplicate push+PR runs on feature branches.
+  #   branches:
+  #     - "main"
+  #     - "release-*"
+  # pull_request:
+  #   branches:
+  #     - "**"
   workflow_dispatch:
 
 permissions:
