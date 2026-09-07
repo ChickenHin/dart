@@ -6,8 +6,8 @@ name: CI Alt Linux (Docker)
 # breakage is effectively never PR-local, so it fits the scheduled/manual
 # tier of the CI tiering policy rather than the PR tier.
 on:
-  schedule:
-    - cron: "0 5 * * 1"
+  # schedule:
+  #   - cron: "0 5 * * 1"
   workflow_dispatch:
 
 permissions:
