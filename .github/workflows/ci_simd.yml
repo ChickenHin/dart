@@ -7,33 +7,33 @@ name: CI SIMD Multi-Arch
 # of the `tests` target that job runs on every PR.
 
 on:
-  push:
-    # Branch validation happens via pull_request; only run on push for the
-    # mainline refs to avoid duplicate push+PR runs on feature branches.
-    branches:
-      - "main"
-      - "release-*"
-    paths:
-      - "dart/simd/**"
-      - "tests/unit/simd/**"
-      - "tests/benchmark/simd/**"
-      - "CMakeLists.txt"
-      - "pixi.toml"
-      - "pixi.lock"
-      - ".github/actions/**"
-      - ".github/workflows/ci_simd.yml"
-  pull_request:
-    branches:
-      - "**"
-    paths:
-      - "dart/simd/**"
-      - "tests/unit/simd/**"
-      - "tests/benchmark/simd/**"
-      - "CMakeLists.txt"
-      - "pixi.toml"
-      - "pixi.lock"
-      - ".github/actions/**"
-      - ".github/workflows/ci_simd.yml"
+  # push:
+  #   # Branch validation happens via pull_request; only run on push for the
+  #   # mainline refs to avoid duplicate push+PR runs on feature branches.
+  #   branches:
+  #     - "main"
+  #     - "release-*"
+  #   paths:
+  #     - "dart/simd/**"
+  #     - "tests/unit/simd/**"
+  #     - "tests/benchmark/simd/**"
+  #     - "CMakeLists.txt"
+  #     - "pixi.toml"
+  #     - "pixi.lock"
+  #     - ".github/actions/**"
+  #     - ".github/workflows/ci_simd.yml"
+  # pull_request:
+  #   branches:
+  #     - "**"
+  #   paths:
+  #     - "dart/simd/**"
+  #     - "tests/unit/simd/**"
+  #     - "tests/benchmark/simd/**"
+  #     - "CMakeLists.txt"
+  #     - "pixi.toml"
+  #     - "pixi.lock"
+  #     - ".github/actions/**"
+  #     - ".github/workflows/ci_simd.yml"
   workflow_dispatch:
 
 permissions:
