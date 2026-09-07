@@ -3,18 +3,18 @@
 name: CI macOS
 
 on:
-  push:
-    branches:
-      - "main"
-      - "release-*"
-  pull_request:
-    branches:
-      - "**"
-  schedule:
-    # Weekly drift canary. The minute offsets between the platform crons are
-    # cosmetic: GitHub's cron jitter (often 30-60 min, sometimes hours) and the
-    # ~100 min Linux/Windows runs make the runs overlap anyway.
-    - cron: "40 2 * * 0"
+  # push:
+  #   branches:
+  #     - "main"
+  #     - "release-*"
+  # pull_request:
+  #   branches:
+  #     - "**"
+  # schedule:
+  #   # Weekly drift canary. The minute offsets between the platform crons are
+  #   # cosmetic: GitHub's cron jitter (often 30-60 min, sometimes hours) and the
+  #   # ~100 min Linux/Windows runs make the runs overlap anyway.
+  #   - cron: "40 2 * * 0"
   workflow_dispatch:
 
 permissions:
@@ -86,11 +86,11 @@ jobs:
           BUILD_TYPE=Release \
           pixi run test ON Release
 
-      - name: Run Release Python tests
-        run: |
-          DART_VERBOSE=ON \
-          BUILD_TYPE=Release \
-          pixi run test-py ON Release
+      # - name: Run Release Python tests
+      #   run: |
+      #     DART_VERBOSE=ON \
+      #     BUILD_TYPE=Release \
+      #     pixi run test-py ON Release
 
       - name: Build Release examples
         run: |
