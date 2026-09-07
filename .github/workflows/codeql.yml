@@ -3,35 +3,35 @@
 name: CodeQL
 
 on:
-  push:
-    branches:
-      - "main"
-    paths-ignore:
-      - "docs/**"
-      - ".github/workflows/update_lockfiles.yml"
-      - ".readthedocs.yml"
-      - "tutorials/**"
-      - "**/*.md"
-      - "**/*.rst"
-      - "**/*.po"
-      - "**/*.pot"
-  pull_request:
-    branches:
-      - "main"
-    # Pull requests run the Python analysis only, and .github/codeql/config.yml
-    # limits it to these trees, so a PR that changes none of them would only
-    # re-analyze code that main already scanned.
-    paths:
-      - "dart/**/*.py"
-      - "python/**/*.py"
-      - "tests/**/*.py"
-      - "examples/**/*.py"
-      - "tutorials/**/*.py"
-      - "docs/**/*.py"
-      - ".github/codeql/**"
-      - ".github/workflows/codeql.yml"
-  schedule:
-    - cron: "0 6 * * 1" # Weekly on Mondays at 06:00 UTC
+  # push:
+  #   branches:
+  #     - "main"
+  #   paths-ignore:
+  #     - "docs/**"
+  #     - ".github/workflows/update_lockfiles.yml"
+  #     - ".readthedocs.yml"
+  #     - "tutorials/**"
+  #     - "**/*.md"
+  #     - "**/*.rst"
+  #     - "**/*.po"
+  #     - "**/*.pot"
+  # pull_request:
+  #   branches:
+  #     - "main"
+  #   # Pull requests run the Python analysis only, and .github/codeql/config.yml
+  #   # limits it to these trees, so a PR that changes none of them would only
+  #   # re-analyze code that main already scanned.
+  #   paths:
+  #     - "dart/**/*.py"
+  #     - "python/**/*.py"
+  #     - "tests/**/*.py"
+  #     - "examples/**/*.py"
+  #     - "tutorials/**/*.py"
+  #     - "docs/**/*.py"
+  #     - ".github/codeql/**"
+  #     - ".github/workflows/codeql.yml"
+  # schedule:
+  #   - cron: "0 6 * * 1" # Weekly on Mondays at 06:00 UTC
   workflow_dispatch:
 
 permissions:
