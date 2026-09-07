@@ -14,10 +14,10 @@
 name: CI DART 6 Gazebo Canary
 
 on:
-  schedule:
-    # Weekly (Monday). The minute offsets between crons are cosmetic under
-    # GitHub's cron jitter.
-    - cron: "0 7 * * 1"
+  # schedule:
+  #   # Weekly (Monday). The minute offsets between crons are cosmetic under
+  #   # GitHub's cron jitter.
+  #   - cron: "0 7 * * 1"
   workflow_dispatch:
 
 permissions:
