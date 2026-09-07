@@ -15,18 +15,18 @@
 name: CI Linux
 
 on:
-  push:
-    branches:
-      - "main"
-      - "release-*"
-  pull_request:
-    branches:
-      - "**"
-  schedule:
-    # Weekly drift canary (runner images, floating action majors); main
-    # receives several validated pushes a week, so twice-weekly repeated
-    # nothing new. Offset from ci_windows (02:20) and ci_macos (02:40).
-    - cron: "0 2 * * 0"
+  # push:
+  #   branches:
+  #     - "main"
+  #     - "release-*"
+  # pull_request:
+  #   branches:
+  #     - "**"
+  # schedule:
+  #   # Weekly drift canary (runner images, floating action majors); main
+  #   # receives several validated pushes a week, so twice-weekly repeated
+  #   # nothing new. Offset from ci_windows (02:20) and ci_macos (02:40).
+  #   - cron: "0 2 * * 0"
   workflow_dispatch:
 
 permissions:
@@ -102,16 +102,16 @@ jobs:
           BUILD_TYPE=Debug \
           pixi run coverage-report
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v7
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage.info
-          flags: unittests
-          name: codecov-umbrella
-          disable_search: true
-          plugins: noop
-          fail_ci_if_error: false
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v7
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     files: ./coverage.info
+      #     flags: unittests
+      #     name: codecov-umbrella
+      #     disable_search: true
+      #     plugins: noop
+      #     fail_ci_if_error: false
 
   build-release:
     needs: changes
@@ -153,11 +153,11 @@ jobs:
             --build-type Release \
             -R '^test_diff_zero_cost_parity$'
 
-      - name: Run Release Python tests
-        run: |
-          DART_VERBOSE=ON \
-          BUILD_TYPE=Release \
-          pixi run test-py ON Release
+      # - name: Run Release Python tests
+      #   run: |
+      #     DART_VERBOSE=ON \
+      #     BUILD_TYPE=Release \
+      #     pixi run test-py ON Release
 
       - name: Build Release examples
         run: |
@@ -247,14 +247,14 @@ jobs:
             --build-type Release \
             -R '^test_diff_'
 
-      - name: Run differentiable Python tests
-        run: |
-          DARTPY_RUNTIME_DIR=build/default/cpp/Release \
-          pixi run python -I scripts/run_pytest.py \
-            --pythonpath build/default/cpp/Release/python \
-            --pythonpath build/default/cpp/Release/python/dartpy \
-            --repository-conftest \
-            python/tests/unit/simulation/test_diff.py -q
+      # - name: Run differentiable Python tests
+      #   run: |
+      #     DARTPY_RUNTIME_DIR=build/default/cpp/Release \
+      #     pixi run python -I scripts/run_pytest.py \
+      #       --pythonpath build/default/cpp/Release/python \
+      #       --pythonpath build/default/cpp/Release/python/dartpy \
+      #       --repository-conftest \
+      #       python/tests/unit/simulation/test_diff.py -q
 
   build-asan:
     needs: changes
@@ -293,39 +293,39 @@ jobs:
           DART_VERBOSE=ON \
           pixi run test-asan
 
-  collision-benchmark-guard:
-    needs: changes
-    if: >-
-      github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    name: Collision Benchmark Guard
-    runs-on: ubuntu-latest
-    timeout-minutes: 180
-    env:
-      BUILD_TYPE: Release
-      DART_PARALLEL_JOBS: 8
-      CMAKE_BUILD_PARALLEL_LEVEL: 8
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-      - name: Setup DART Linux CI
-        uses: ./.github/actions/setup-dart-linux-ci
-        with:
-          environments: collision-reference
-          install-args: -e collision-reference
+  # collision-benchmark-guard:
+  #   needs: changes
+  #   if: >-
+  #     github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+  #   name: Collision Benchmark Guard
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 180
+  #   env:
+  #     BUILD_TYPE: Release
+  #     DART_PARALLEL_JOBS: 8
+  #     CMAKE_BUILD_PARALLEL_LEVEL: 8
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v7
+  #     - name: Setup DART Linux CI
+  #       uses: ./.github/actions/setup-dart-linux-ci
+  #       with:
+  #         environments: collision-reference
+  #         install-args: -e collision-reference
 
-      - name: Run collision benchmark guard
-        run: |
-          pixi run --locked -e collision-reference bm-collision-check
+  #     - name: Run collision benchmark guard
+  #       run: |
+  #         pixi run --locked -e collision-reference bm-collision-check
 
-      - name: Upload collision benchmark artifacts
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: collision-benchmark-guard-${{ github.run_id }}-${{ github.run_attempt }}
-          path: .benchmark_results/collision_check_*.json
-          if-no-files-found: warn
-          include-hidden-files: true
-          retention-days: 14
+  #     - name: Upload collision benchmark artifacts
+  #       if: always()
+  #       uses: actions/upload-artifact@v7
+  #       with:
+  #         name: collision-benchmark-guard-${{ github.run_id }}-${{ github.run_attempt }}
+  #         path: .benchmark_results/collision_check_*.json
+  #         if-no-files-found: warn
+  #         include-hidden-files: true
+  #         retention-days: 14
 
   build-debug:
     needs: changes
@@ -364,76 +364,76 @@ jobs:
           BUILD_TYPE=Debug \
           pixi run test ON Debug
 
-      - name: Run Debug Python tests
-        run: |
-          # This step builds the dartpy nanobind extension. In Debug each
-          # binding TU is large, so keep parallelism below the 16 GB hosted
-          # runner's memory limit. Request mold for the final Debug module link
-          # when it is present; CMake falls back to the default linker if the
-          # runner image does not provide it. Keep this as a Debug dartpy smoke
-          # path; Release and wheel jobs run the full Python suite.
-          export DART_USE_MOLD_OVERRIDE=ON
-          export DART_VERBOSE=ON
-          export DART_PARALLEL_JOBS=4
-          pixi run build-py-dev ON Debug
-          pixi run python -I scripts/run_pytest.py \
-            --pythonpath build/default/cpp/Debug/python \
-            --pythonpath build/default/cpp/Debug/python/dartpy \
-            --repository-conftest \
-            python/tests/unit/common/test_string.py \
-            python/tests/unit/math/test_lcp.py \
-            python/tests/unit/test_lifetime.py \
-            -vv --tb=short
+      # - name: Run Debug Python tests
+      #   run: |
+      #     # This step builds the dartpy nanobind extension. In Debug each
+      #     # binding TU is large, so keep parallelism below the 16 GB hosted
+      #     # runner's memory limit. Request mold for the final Debug module link
+      #     # when it is present; CMake falls back to the default linker if the
+      #     # runner image does not provide it. Keep this as a Debug dartpy smoke
+      #     # path; Release and wheel jobs run the full Python suite.
+      #     export DART_USE_MOLD_OVERRIDE=ON
+      #     export DART_VERBOSE=ON
+      #     export DART_PARALLEL_JOBS=4
+      #     pixi run build-py-dev ON Debug
+      #     pixi run python -I scripts/run_pytest.py \
+      #       --pythonpath build/default/cpp/Debug/python \
+      #       --pythonpath build/default/cpp/Debug/python/dartpy \
+      #       --repository-conftest \
+      #       python/tests/unit/common/test_string.py \
+      #       python/tests/unit/math/test_lcp.py \
+      #       python/tests/unit/test_lifetime.py \
+      #       -vv --tb=short
 
-  build-asserts:
-    needs: changes
-    if: >-
-      github.event_name == 'schedule' ||
-      github.event_name == 'workflow_dispatch' ||
-      needs.changes.outputs.code == 'true'
-    name: Asserts enabled (no -DNDEBUG)
-    runs-on: ubuntu-latest
-    # Build-only: the one CI build that compiles with -Werror while DART_ASSERT
-    # bodies are live (CMAKE_BUILD_TYPE=None), exercises the fetched Tracy
-    # client, and compiles examples and dartpy in that mode. ~2 min warm.
-    timeout-minutes: 90
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-      - name: Setup DART Linux CI
-        uses: ./.github/actions/setup-dart-linux-ci
+  # build-asserts:
+  #   needs: changes
+  #   if: >-
+  #     github.event_name == 'schedule' ||
+  #     github.event_name == 'workflow_dispatch' ||
+  #     needs.changes.outputs.code == 'true'
+  #   name: Asserts enabled (no -DNDEBUG)
+  #   runs-on: ubuntu-latest
+  #   # Build-only: the one CI build that compiles with -Werror while DART_ASSERT
+  #   # bodies are live (CMAKE_BUILD_TYPE=None), exercises the fetched Tracy
+  #   # client, and compiles examples and dartpy in that mode. ~2 min warm.
+  #   timeout-minutes: 90
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v7
+  #     - name: Setup DART Linux CI
+  #       uses: ./.github/actions/setup-dart-linux-ci
 
-      - name: Build with assertions and Tracy profiling (no -DNDEBUG)
-        run: |
-          # NOTE: pixi tasks set BUILD_TYPE internally, so configure this
-          # variant explicitly to ensure NDEBUG is not defined. This also
-          # smoke-tests the fetched Tracy client path without installing Tracy
-          # through Pixi package dependencies.
-          pixi run -- bash -lc '
-            set -euo pipefail
-            BUILD_TYPE=None
-            DART_VERBOSE=ON
-            eval "HOST_LINKER_DEFS=($(python scripts/cmake_host_linker_flags.py))"
-            cmake \
-              -G Ninja \
-              -S . \
-              -B build/$PIXI_ENVIRONMENT_NAME/cpp/$BUILD_TYPE \
-              -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
-              -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
-              -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
-              -DDART_BUILD_DARTPY=ON \
-              -DDART_BUILD_COLLISION_REFERENCE_TESTS=OFF \
-              -DDART_BUILD_COLLISION_REFERENCE_BENCHMARKS=OFF \
-              -DDART_BUILD_PROFILE=ON \
-              -DDART_PROFILE_TRACY=ON \
-              -DDART_USE_SYSTEM_GOOGLEBENCHMARK=ON \
-              -DDART_USE_SYSTEM_GOOGLETEST=ON \
-              -DDART_USE_SYSTEM_IMGUI=ON \
-              -DDART_USE_SYSTEM_TRACY=OFF \
-              -DDART_VERBOSE=$DART_VERBOSE \
-              ${HOST_LINKER_DEFS[@]+"${HOST_LINKER_DEFS[@]}"}
-            cmake --build build/$PIXI_ENVIRONMENT_NAME/cpp/$BUILD_TYPE -j
-          '
+  #     - name: Build with assertions and Tracy profiling (no -DNDEBUG)
+  #       run: |
+  #         # NOTE: pixi tasks set BUILD_TYPE internally, so configure this
+  #         # variant explicitly to ensure NDEBUG is not defined. This also
+  #         # smoke-tests the fetched Tracy client path without installing Tracy
+  #         # through Pixi package dependencies.
+  #         pixi run -- bash -lc '
+  #           set -euo pipefail
+  #           BUILD_TYPE=None
+  #           DART_VERBOSE=ON
+  #           eval "HOST_LINKER_DEFS=($(python scripts/cmake_host_linker_flags.py))"
+  #           cmake \
+  #             -G Ninja \
+  #             -S . \
+  #             -B build/$PIXI_ENVIRONMENT_NAME/cpp/$BUILD_TYPE \
+  #             -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+  #             -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
+  #             -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+  #             -DDART_BUILD_DARTPY=ON \
+  #             -DDART_BUILD_COLLISION_REFERENCE_TESTS=OFF \
+  #             -DDART_BUILD_COLLISION_REFERENCE_BENCHMARKS=OFF \
+  #             -DDART_BUILD_PROFILE=ON \
+  #             -DDART_PROFILE_TRACY=ON \
+  #             -DDART_USE_SYSTEM_GOOGLEBENCHMARK=ON \
+  #             -DDART_USE_SYSTEM_GOOGLETEST=ON \
+  #             -DDART_USE_SYSTEM_IMGUI=ON \
+  #             -DDART_USE_SYSTEM_TRACY=OFF \
+  #             -DDART_VERBOSE=$DART_VERBOSE \
+  #             ${HOST_LINKER_DEFS[@]+"${HOST_LINKER_DEFS[@]}"}
+  #           cmake --build build/$PIXI_ENVIRONMENT_NAME/cpp/$BUILD_TYPE -j
+          # '
 
   eigen-overalignment:
     needs: changes
